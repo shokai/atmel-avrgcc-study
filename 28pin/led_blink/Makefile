@@ -1,4 +1,4 @@
-DEVICE     = atmega168p
+DEVICE     = atmega168
 CLOCK      = 8000000
 PROGRAMMER = -c usbasp
 OBJECTS    = main.o
