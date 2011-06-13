@@ -1,5 +1,4 @@
 #include <avr/io.h>
-#include <avr/sleep.h>
 #include <util/delay.h>
 
 #define TRUE 1
@@ -19,7 +18,6 @@ void check_sw(void){
   if(PINB&_BV(PB2)) LED2_ON();
   else LED2_OFF();
 }
-
 
 int main(void)
 {
