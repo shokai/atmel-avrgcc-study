@@ -18,15 +18,29 @@ void usart_init(unsigned int bps){
   UBRR0H = (unsigned char)(ubrr>>8); // ボーレート上位8bit
   UBRR0L = (unsigned char)ubrr; // ボーレート下位8bit
   UCSR0A = (0<<U2X0); // 等速
-  UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0); // 送信許可、受信完了割り込みしない
-  UCSR0C = (0<<UMSEL00)|(3<<UCSZ00)|(1<<USBS0)|(0<<UPM00); // async 8bit 1stopbit 0parity
+  UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0); // 送受信許可、受信完了割り込み許可
+  UCSR0C = (0<<UMSEL00)|(3<<UCSZ00)|(1<<USBS0)|(0<<UPM00); // async 8bit 1stopbit 0parity  
+}
+  
+void usart_send_str(char *str){
+  while(*str != NULL){
+    loop_until_bit_is_set(UCSR0A,UDRE0);
+    UDR0 = *str++;
+  }
 }
 
-void usart_send_str(char *str){
-while(*str != NULL){
-  loop_until_bit_is_set(UCSR0A,UDRE0);
-  UDR0 = *str++;
- }
+void adc_init(void){
+  ADMUX = (0<<REFS0); // 外部基準電圧
+  ADCSRA =(1<<ADEN)|(1<<ADSC)|(0<<ADPS0); // A/D変換許可、1回目変換開始(調整)、分周率2
+}
+
+// return 1-1023
+int adc_read(char pin){
+  ADMUX = pin; // AD変換入力ピン
+  cbi(ADCSRA,ADIF);
+  sbi(ADCSRA,ADSC); // 変換開始
+  loop_until_bit_is_set(ADCSRA,ADIF); // 変換完了まで待つ
+  return ADCL + (ADCH<<8);
 }
 
 int main(void)
@@ -34,17 +48,23 @@ int main(void)
   sbi(DDRB, PB0);
   sbi(DDRD, PD7);
   usart_init(9600);
+  adc_init();
   usart_send_str("start\n");
 
+  int ad;
+  char buf[10];
   for(;;){
-    LED0_ON();
-    LED1_OFF();
-    usart_send_str("muho\n");
-    _delay_ms(100);
-
-    LED0_OFF();
-    LED1_ON();
-    usart_send_str("homuhomu\n");
+    ad = adc_read(5);
+    usart_send_str(itoa(ad, buf, 10));
+    usart_send_str("\n");
+    if(ad > 600){
+      LED0_ON();
+      LED1_OFF();
+    }
+    else{
+      LED0_OFF();
+      LED1_ON();
+    }
     _delay_ms(100);
   }
   return 0;
