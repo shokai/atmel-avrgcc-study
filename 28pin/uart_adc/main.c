@@ -51,21 +51,22 @@ int main(void)
   adc_init();
   usart_send_str("start\n");
 
-  int ad;
+  int ad, ad_p;
   char buf[10];
   for(;;){
     ad = adc_read(5);
     usart_send_str(itoa(ad, buf, 10));
     usart_send_str("\n");
-    if(ad > 600){
+    if(ad-ad_p > 5){
       LED0_ON();
       LED1_OFF();
     }
-    else{
+    else if(ad_p-ad > 5){
       LED0_OFF();
       LED1_ON();
     }
     _delay_ms(100);
+    ad_p = ad;
   }
   return 0;
 }
