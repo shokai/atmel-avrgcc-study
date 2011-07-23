@@ -21,10 +21,10 @@ void usart_init(unsigned int bps){
   UCSR0B = (1<<RXEN0)|(1<<TXEN0)|(1<<RXCIE0); // 送受信許可、受信完了割り込み許可
   UCSR0C = (0<<UMSEL00)|(3<<UCSZ00)|(1<<USBS0)|(0<<UPM00); // async 8bit 1stopbit 0parity  
 }
-  
+
 void usart_send_str(char *str){
   while(*str != '\0'){
-    loop_until_bit_is_set(UCSR0A,UDRE0);
+    loop_until_bit_is_set(UCSR0A, UDRE0);
     UDR0 = *str++;
   }
 }
@@ -37,9 +37,9 @@ void adc_init(void){
 // return 1-1023
 int adc_read(char pin){
   ADMUX = pin; // AD変換入力ピン
-  cbi(ADCSRA,ADIF);
-  sbi(ADCSRA,ADSC); // 変換開始
-  loop_until_bit_is_set(ADCSRA,ADIF); // 変換完了まで待つ
+  cbi(ADCSRA, ADIF);
+  sbi(ADCSRA, ADSC); // 変換開始
+  loop_until_bit_is_set(ADCSRA, ADIF); // 変換完了まで待つ
   return ADCL + (ADCH<<8);
 }
 
