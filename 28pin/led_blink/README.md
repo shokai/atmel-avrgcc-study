@@ -2,7 +2,7 @@ ATMega168p LED Blink
 ====================
 
 * AVR ATMega168
-* avr-gcc (CrossPack for AVR)
+* avr-gcc 4.3.3 (CrossPack for AVR)
 * Mac OSX
 
 

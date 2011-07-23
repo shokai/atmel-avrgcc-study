@@ -3,7 +3,7 @@ ATMega168p ADC->UART
 read ADC --> write UART
 
 * AVR ATMega168u
-* avr-gcc (CrossPack for AVR)
+* avr-gcc 4.3.3 (CrossPack for AVR)
 * Mac OSX
 
 
