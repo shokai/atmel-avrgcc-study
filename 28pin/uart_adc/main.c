@@ -23,7 +23,7 @@ void usart_init(unsigned int bps){
 }
   
 void usart_send_str(char *str){
-  while(*str != NULL){
+  while(*str != '\0'){
     loop_until_bit_is_set(UCSR0A,UDRE0);
     UDR0 = *str++;
   }
